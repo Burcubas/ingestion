@@ -1,0 +1,63 @@
+database:
+  host: "localhost"
+  port: 5432
+  db_name: "postgres"
+  user: "postgres"
+  password: ""
+
+sources:
+  - name: customers
+    type:
+      - type: csv
+      - type: json
+    path: 
+      - path: data/customers.csv
+      - path: data/customers.json
+    target_table: stg_customers
+    pk: [customer_id]
+    schema:
+      customer_id: int
+      first_name: str
+      last_name: str
+      age: int
+      email: str
+      created_at: datetime
+    rules:
+      - rule: "customer_id.notnull()"
+      - rule: "customer_id >= 0"
+      - rule: "first_name.str.len() > 0"
+      - rule: "last_name.str.len() > 0"
+      - rule: "age.notnull()"
+      - rule: "age > 0"
+      - rule: "email.notnull()"
+      - rule: "email.str.contains('@')"
+      - rule: "created_at.notnull()"
+
+  - name: sales
+    type: 
+      - type: csv
+      - type: json
+    path:
+      - path: data/sales.csv
+      - path: data/sales.json
+    target_table: stg_sales
+    pk: [sale_id]
+    schema:
+      sale_id: int
+      customer_id: int
+      amount: float
+      currency: str
+      ts: datetime
+    rules:
+      - rule: "sale_id.notnull()"
+      - rule: "customer_id.notnull()"
+      - rule: "amount >= 0"
+      - rule: "currency in ['USD','EUR','CAD']" 
+      - rule: "ts.notnull()"
+
+
+
+
+
+
+
