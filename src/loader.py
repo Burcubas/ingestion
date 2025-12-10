@@ -1,23 +1,40 @@
-import psycopg2 
+import psycopg2
+import logging
 
+logger = logging.getLogger(__name__)
 
 class Dao:
     def __init__(self, config_object):
         self.config_object = config_object
 
     def connection(self):
-        db = self.config_object.config_data["database"]
-        
-        conn = psycopg2.connect(
-            host = db["host"],
-            port = db["port"],
-            database = db["db_name"], 
-            user = db["user"],
-            password = db["password"]
-        )
-        return conn
+        try:
+            db = self.config_object.config_data["database"]
+
+            logger.info("Attempting to connect to PostgreSQL database...")
+            conn = psycopg2.connect(
+                host=db["host"],
+                port=db["port"],
+                database=db["db_name"],
+                user=db["user"],
+                password=db["password"]
+            )
+            logger.info("Successfully connected to PostgreSQL database.")
+            return conn
+
+        except Exception as e:
+            logger.error(f"Database connection failed")
+            return None
+
+
     def creates_tables(self):
+        logger.info("Starting table creation process...")
+
         conn = self.connection()
+        if conn is None:
+            logger.error("Table creation aborted: No database connection.")
+            return
+        
         cursor = conn.cursor()
 
         try:
@@ -48,12 +65,28 @@ class Dao:
                 rejected_at   TIMESTAMP NOT NULL DEFAULT NOW()
             );
             """)
+
             conn.commit()
+            logger.info("Successfully created all staging tables.")
+            return True
+
+        except Exception as e:
+            logger.error(f"Error creating tables: {e}")
+
         finally:
             cursor.close()
             conn.close()
+            logger.info("Closed DB connection after table creation.")
+
+
     def load_customers(self, df):
+        logger.info("Starting customer load process...")
+
         conn = self.connection()
+        if conn is None:
+            logger.error("Customer load aborted: No database connection.")
+            return
+        
         cursor = conn.cursor()
 
         sql = """
@@ -70,22 +103,34 @@ class Dao:
         try:
             for _, row in df.iterrows():
                 cursor.execute(sql, (
-                    row['customer_id'],
-                    row['first_name'],
-                    row['last_name'],
-                    row['email'],
-                    row['age'],
-                    row['created_at']
+                    row["customer_id"],
+                    row["first_name"],
+                    row["last_name"],
+                    row["email"],
+                    row["age"],
+                    row["created_at"]
                 ))
-
+            
             conn.commit()
+            logger.info("Successfully loaded customers data.")
+            return True
+        except Exception as e:
+            logger.error(f"Error loading customers data: {e}")
 
         finally:
             cursor.close()
             conn.close()
+            logger.info("Closed DB connection after loading customers.")
+
 
     def load_sales(self, df):
+        logger.info("Starting sales load process...")
+
         conn = self.connection()
+        if conn is None:
+            logger.error("Sales load aborted: No database connection.")
+            return
+
         cursor = conn.cursor()
 
         sql = """
@@ -97,18 +142,66 @@ class Dao:
                 currency    = EXCLUDED.currency,
                 ts          = EXCLUDED.ts;
         """
+
         try:
             for _, row in df.iterrows():
                 cursor.execute(sql, (
-                    row['sale_id'],
-                    row['customer_id'],
-                    row['amount'],
-                    row['currency'],
-                    row['ts']
+                    row["sale_id"],
+                    row["customer_id"],
+                    row["amount"],
+                    row["currency"],
+                    row["ts"]
                 ))
+
             conn.commit()
+            logger.info("Successfully loaded sales data.")
+            return True
+        except Exception as e:
+            logger.error(f"Error loading sales data: {e}")
 
         finally:
             cursor.close()
             conn.close()
-        
+            logger.info("Closed DB connection after loading sales.")
+
+
+    def load_rejects(self, source_name, df_rejects):
+        logger.info("Starting rejects load process...")
+
+        conn = self.connection()
+        if conn is None:
+            logger.error("Rejects load aborted: No database connection.")
+            return
+
+        cursor = conn.cursor()
+
+        sql = """
+            INSERT INTO stg_rejects (source_name, raw_payload, reason)
+            VALUES (%s, %s, %s);
+        """
+
+        try:
+            for _, row in df_rejects.iterrows():
+                reason = row.get("reject_reason", "unknown")
+                raw_payload = ",".join(
+                    map(str, row.drop(labels=["reject_reason"], errors="ignore").values)
+                )
+                cursor.execute(
+                    sql,
+                    (
+                        source_name,
+                        raw_payload,
+                        reason,
+                    ),
+                )
+
+            conn.commit()
+            logger.info("Successfully loaded rejects data.")
+
+        except Exception as e:
+            logger.error(f"Error loading rejects data: {e}")
+
+        finally:
+            cursor.close()
+            conn.close()
+            logger.info("Closed DB connection after loading rejects.")

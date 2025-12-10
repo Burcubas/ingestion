@@ -1,0 +1,105 @@
+2025-12-09 19:23:26,077 - loader - INFO - Starting table creation process...
+2025-12-09 19:23:26,077 - loader - INFO - Attempting to connect to PostgreSQL database...
+2025-12-09 19:23:26,124 - loader - INFO - Successfully connected to PostgreSQL database.
+2025-12-09 19:23:26,129 - loader - INFO - Successfully created all staging tables.
+2025-12-09 19:23:26,129 - loader - INFO - Closed DB connection after table creation.
+2025-12-09 19:23:26,129 - __main__ - INFO - Starting ingestion loop...
+2025-12-09 19:23:26,132 - readers.csv_reader - INFO - Successfully read customers CSV from: data/customers.csv
+2025-12-09 19:23:26,132 - __main__ - INFO - Processing 50 records from data/customers.csv
+2025-12-09 19:23:26,132 - validator - INFO - Starting customer dataframe validation...
+2025-12-09 19:23:26,133 - validator - INFO - Converting column customer_id to numeric.
+2025-12-09 19:23:26,133 - validator - INFO - Converting column age to numeric.
+2025-12-09 19:23:26,134 - validator - INFO - Converting column created_at to datetime.
+2025-12-09 19:23:26,135 - validator - INFO - Applying customer rule: customer_id.notnull()
+2025-12-09 19:23:26,137 - validator - WARNING - Customer validation rule failed: customer_id.notnull() → 2 rows rejected.
+2025-12-09 19:23:26,137 - validator - INFO - Applying customer rule: customer_id >= 0
+2025-12-09 19:23:26,138 - validator - WARNING - Customer validation rule failed: customer_id >= 0 → 1 rows rejected.
+2025-12-09 19:23:26,139 - validator - INFO - Applying customer rule: first_name.str.len() > 0
+2025-12-09 19:23:26,139 - validator - WARNING - Customer validation rule failed: first_name.str.len() > 0 → 3 rows rejected.
+2025-12-09 19:23:26,140 - validator - INFO - Applying customer rule: last_name.str.len() > 0
+2025-12-09 19:23:26,141 - validator - WARNING - Customer validation rule failed: last_name.str.len() > 0 → 1 rows rejected.
+2025-12-09 19:23:26,141 - validator - INFO - Applying customer rule: age.notnull()
+2025-12-09 19:23:26,142 - validator - WARNING - Customer validation rule failed: age.notnull() → 7 rows rejected.
+2025-12-09 19:23:26,142 - validator - INFO - Applying customer rule: age > 0
+2025-12-09 19:23:26,143 - validator - WARNING - Customer validation rule failed: age > 0 → 2 rows rejected.
+2025-12-09 19:23:26,143 - validator - INFO - Applying customer rule: email.notnull()
+2025-12-09 19:23:26,144 - validator - WARNING - Customer validation rule failed: email.notnull() → 1 rows rejected.
+2025-12-09 19:23:26,144 - validator - INFO - Applying customer rule: email.str.contains('@')
+2025-12-09 19:23:26,145 - validator - WARNING - Customer validation rule failed: email.str.contains('@') → 1 rows rejected.
+2025-12-09 19:23:26,145 - validator - INFO - Applying customer rule: created_at.notnull()
+2025-12-09 19:23:26,146 - validator - WARNING - Customer validation rule failed: created_at.notnull() → 3 rows rejected.
+2025-12-09 19:23:26,146 - validator - INFO - Customer dataframe validation complete → 29 rows passed, 21 rows rejected.
+2025-12-09 19:23:26,146 - loader - INFO - Starting rejects load process...
+2025-12-09 19:23:26,146 - loader - INFO - Attempting to connect to PostgreSQL database...
+2025-12-09 19:23:26,160 - loader - INFO - Successfully connected to PostgreSQL database.
+2025-12-09 19:23:26,171 - loader - INFO - Successfully loaded rejects data.
+2025-12-09 19:23:26,171 - loader - INFO - Closed DB connection after loading rejects.
+2025-12-09 19:23:26,171 - loader - INFO - Starting customer load process...
+2025-12-09 19:23:26,171 - loader - INFO - Attempting to connect to PostgreSQL database...
+2025-12-09 19:23:26,182 - loader - INFO - Successfully connected to PostgreSQL database.
+2025-12-09 19:23:26,189 - loader - INFO - Successfully loaded customers data.
+2025-12-09 19:23:26,189 - loader - INFO - Closed DB connection after loading customers.
+2025-12-09 19:23:26,189 - __main__ - INFO - Loaded 29 customer records. Rejected 21 records.
+2025-12-09 19:23:26,189 - __main__ - INFO - Archived file: data/customers.csv
+2025-12-09 19:23:26,191 - readers.json_reader - INFO - Successfully read customers JSON from: data/customers.json
+2025-12-09 19:23:26,191 - __main__ - INFO - Processing 50 records from data/customers.json
+2025-12-09 19:23:26,191 - validator - INFO - Starting customer dataframe validation...
+2025-12-09 19:23:26,191 - validator - INFO - Converting column customer_id to numeric.
+2025-12-09 19:23:26,191 - validator - INFO - Converting column age to numeric.
+2025-12-09 19:23:26,191 - validator - INFO - Converting column created_at to datetime.
+2025-12-09 19:23:26,192 - validator - INFO - Applying customer rule: customer_id.notnull()
+2025-12-09 19:23:26,193 - validator - INFO - Applying customer rule: customer_id >= 0
+2025-12-09 19:23:26,193 - validator - INFO - Applying customer rule: first_name.str.len() > 0
+2025-12-09 19:23:26,194 - validator - INFO - Applying customer rule: last_name.str.len() > 0
+2025-12-09 19:23:26,195 - validator - WARNING - Customer validation rule failed: last_name.str.len() > 0 → 1 rows rejected.
+2025-12-09 19:23:26,196 - validator - INFO - Applying customer rule: age.notnull()
+2025-12-09 19:23:26,196 - validator - WARNING - Customer validation rule failed: age.notnull() → 6 rows rejected.
+2025-12-09 19:23:26,197 - validator - INFO - Applying customer rule: age > 0
+2025-12-09 19:23:26,197 - validator - WARNING - Customer validation rule failed: age > 0 → 3 rows rejected.
+2025-12-09 19:23:26,198 - validator - INFO - Applying customer rule: email.notnull()
+2025-12-09 19:23:26,199 - validator - INFO - Applying customer rule: email.str.contains('@')
+2025-12-09 19:23:26,200 - validator - INFO - Applying customer rule: created_at.notnull()
+2025-12-09 19:23:26,201 - validator - INFO - Customer dataframe validation complete → 40 rows passed, 10 rows rejected.
+2025-12-09 19:23:26,201 - loader - INFO - Starting rejects load process...
+2025-12-09 19:23:26,201 - loader - INFO - Attempting to connect to PostgreSQL database...
+2025-12-09 19:23:26,213 - loader - INFO - Successfully connected to PostgreSQL database.
+2025-12-09 19:23:26,216 - loader - INFO - Successfully loaded rejects data.
+2025-12-09 19:23:26,216 - loader - INFO - Closed DB connection after loading rejects.
+2025-12-09 19:23:26,216 - loader - INFO - Starting customer load process...
+2025-12-09 19:23:26,216 - loader - INFO - Attempting to connect to PostgreSQL database...
+2025-12-09 19:23:26,227 - loader - INFO - Successfully connected to PostgreSQL database.
+2025-12-09 19:23:26,232 - loader - INFO - Successfully loaded customers data.
+2025-12-09 19:23:26,232 - loader - INFO - Closed DB connection after loading customers.
+2025-12-09 19:23:26,232 - __main__ - INFO - Loaded 40 customer records. Rejected 10 records.
+2025-12-09 19:23:26,232 - __main__ - INFO - Archived file: data/customers.json
+2025-12-09 19:23:26,233 - readers.json_reader - INFO - Successfully read sales JSON from: data/sales.json
+2025-12-09 19:23:26,233 - __main__ - INFO - Processing 50 records from data/sales.json
+2025-12-09 19:23:26,234 - validator - INFO - Starting sales dataframe validation...
+2025-12-09 19:23:26,234 - validator - INFO - Converting column sale_id to numeric.
+2025-12-09 19:23:26,234 - validator - INFO - Converting column customer_id to numeric.
+2025-12-09 19:23:26,234 - validator - INFO - Converting column amount to numeric.
+2025-12-09 19:23:26,234 - validator - INFO - Converting column ts to datetime.
+2025-12-09 19:23:26,235 - validator - INFO - Applying sales rule: sale_id.notnull()
+2025-12-09 19:23:26,235 - validator - INFO - Applying sales rule: customer_id.notnull()
+2025-12-09 19:23:26,236 - validator - WARNING - Sales validation rule failed: customer_id.notnull() → 1 rows rejected.
+2025-12-09 19:23:26,236 - validator - INFO - Applying sales rule: amount >= 0
+2025-12-09 19:23:26,237 - validator - WARNING - Sales validation rule failed: amount >= 0 → 8 rows rejected.
+2025-12-09 19:23:26,237 - validator - INFO - Applying sales rule: currency in ['USD','EUR','CAD']
+2025-12-09 19:23:26,239 - validator - WARNING - Sales validation rule failed: currency in ['USD','EUR','CAD'] → 23 rows rejected.
+2025-12-09 19:23:26,239 - validator - INFO - Applying sales rule: ts.notnull()
+2025-12-09 19:23:26,240 - validator - INFO - Sales dataframe validation complete → 18 rows passed, 32 rows rejected.
+2025-12-09 19:23:26,240 - loader - INFO - Starting rejects load process...
+2025-12-09 19:23:26,240 - loader - INFO - Attempting to connect to PostgreSQL database...
+2025-12-09 19:23:26,251 - loader - INFO - Successfully connected to PostgreSQL database.
+2025-12-09 19:23:26,257 - loader - INFO - Successfully loaded rejects data.
+2025-12-09 19:23:26,257 - loader - INFO - Closed DB connection after loading rejects.
+2025-12-09 19:23:26,257 - loader - INFO - Starting sales load process...
+2025-12-09 19:23:26,257 - loader - INFO - Attempting to connect to PostgreSQL database...
+2025-12-09 19:23:26,268 - loader - INFO - Successfully connected to PostgreSQL database.
+2025-12-09 19:23:26,272 - loader - INFO - Successfully loaded sales data.
+2025-12-09 19:23:26,272 - loader - INFO - Closed DB connection after loading sales.
+2025-12-09 19:23:26,272 - __main__ - INFO - Loaded 18 sales records. Rejected 32 records.
+2025-12-09 19:23:26,272 - __main__ - INFO - Archived file: data/sales.json
+2025-12-09 19:23:26,272 - __main__ - INFO - Waiting for 30 seconds before next cycle...
+2025-12-09 19:23:56,278 - __main__ - INFO - Waiting for 30 seconds before next cycle...
+2025-12-09 19:24:26,281 - __main__ - INFO - Waiting for 30 seconds before next cycle...
