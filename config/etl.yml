@@ -4,7 +4,9 @@ database:
   db_name: "postgres"
   user: "postgres"
   password: ""
-
+settings:
+  loop_time: 30
+  debug_level: "INFO"
 sources:
   - name: customers
     type:

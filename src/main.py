@@ -8,11 +8,18 @@ import cleaner
 import loader
 import logging
 
+config_obj = config.Config()
 
 os.makedirs("logs", exist_ok=True)
+levels={
+    "DEBUG":logging.DEBUG,
+    "INFO":logging.INFO,
+    "WARNING":logging.WARNING,
+    "ERROR":logging.ERROR,
+    "CRITICAL":logging.CRITICAL}
 
 logging.basicConfig(
-    level=logging.INFO,
+    level=levels[config_obj.config_data['settings']['debug_level']],
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
         logging.StreamHandler(),
@@ -21,12 +28,13 @@ logging.basicConfig(
 )
 
 
-config_obj = config.Config()
+
 csv_reader_object = csv_reader.CSVRead(config_obj) 
 json_reader_object = json_reader.JSONRead(config_obj)
 validator_obj = validator.Validate(config_obj)
 cleaner_obj = cleaner.Clean(config_obj)
 DAO_object = loader.Dao(config_obj)
+
 DAO_object.creates_tables()
 
 logger = logging.getLogger(__name__)
@@ -102,5 +110,5 @@ while True:
             logger.info(f"Loaded {len(df_cleaned)} sales records. Rejected {len(df_rejects)} records.")
             archive_file(path)
     
-    logger.info("Waiting for 30 seconds before next cycle...")
-    time.sleep(30)
+    logger.info(f"Waiting for {config_obj.config_data['settings']['loop_time']} seconds before next cycle...")
+    time.sleep(config_obj.config_data['settings']['loop_time'])
