@@ -1,7 +1,18 @@
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+SRC_PATH = ROOT / "src"
+
+if str(SRC_PATH) not in sys.path:
+    sys.path.insert(0, str(SRC_PATH))
+
 import loader
+import config
 
 
-def test_connection_uses_config(monkeypatch, dao_obj, config_obj):
+def test_connection_uses_config(monkeypatch):
+    config_obj = config.Config()
     db_conf = config_obj.config_data["database"]
     called_kwargs = {}
     dummy_conn = object()
@@ -12,7 +23,7 @@ def test_connection_uses_config(monkeypatch, dao_obj, config_obj):
 
     monkeypatch.setattr(loader.psycopg2, "connect", fake_connect)
 
-    conn = dao_obj.connection()
+    conn = loader.Dao(config_obj).connection()
 
     assert conn is dummy_conn
     assert called_kwargs == {

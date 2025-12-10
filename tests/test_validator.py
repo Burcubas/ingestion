@@ -1,8 +1,19 @@
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+SRC_PATH = ROOT / "src"
+
+if str(SRC_PATH) not in sys.path:
+    sys.path.insert(0, str(SRC_PATH))
+
 import pandas as pd
 from pandas.api.types import is_datetime64_any_dtype
+import config
+import validator
 
 
-def test_customers_validator_missing_required_column(validator_obj):
+def test_customers_validator_missing_required_column():
     df = pd.DataFrame(
         {
             "customer_id": [1],
@@ -13,6 +24,8 @@ def test_customers_validator_missing_required_column(validator_obj):
         }
     )
 
+    config_obj = config.Config()
+    validator_obj = validator.Validate(config_obj)
     df_validated, df_rejects = validator_obj.df_customers_validator(df)
 
     assert df_validated.empty
@@ -20,7 +33,7 @@ def test_customers_validator_missing_required_column(validator_obj):
     assert df_rejects.loc[0, "reject_reason"] == "column email is missing"
 
 
-def test_customers_validator_applies_rules_and_captures_rejects(validator_obj):
+def test_customers_validator_applies_rules_and_captures_rejects():
     df = pd.DataFrame(
         {
             "customer_id": [1, 2],
@@ -32,6 +45,8 @@ def test_customers_validator_applies_rules_and_captures_rejects(validator_obj):
         }
     )
 
+    config_obj = config.Config()
+    validator_obj = validator.Validate(config_obj)
     df_validated, df_rejects = validator_obj.df_customers_validator(df)
 
     assert len(df_validated) == 1
@@ -41,7 +56,7 @@ def test_customers_validator_applies_rules_and_captures_rejects(validator_obj):
     assert df_rejects.iloc[0]["reject_reason"] == "not passing age > 0 rule"
 
 
-def test_sales_validator_accepts_valid_rows(validator_obj):
+def test_sales_validator_accepts_valid_rows():
     df = pd.DataFrame(
         {
             "sale_id": [10],
@@ -52,6 +67,8 @@ def test_sales_validator_accepts_valid_rows(validator_obj):
         }
     )
 
+    config_obj = config.Config()
+    validator_obj = validator.Validate(config_obj)
     df_validated, df_rejects = validator_obj.df_sales_validator(df)
 
     assert len(df_validated) == 1
